@@ -1,0 +1,101 @@
+<!doctype html>
+
+<html>
+<head>
+	<title>Tab Timer</title>
+</head>
+<body>
+
+	<br>
+
+	Hours: <input type="number" id="hours" min="0">
+
+	<br>
+
+	Minutes: <input type="number" id="minutes" min="0" max="59">
+
+	<br>
+
+	Seconds: <input type="number" id="seconds" min="0" max="59">
+
+	<br><br>
+
+	<button id="start" onclick="start()">Start</button>
+	<button id="reset" onclick="reset()">Reset</button>
+
+	<script type="text/javascript">
+
+		var seconds = 0;
+		var resetBoolean = false;
+
+		function start () {
+
+			var hours = 0; 
+			var minutes = 0;
+
+			var tempHours = document.getElementById('hours').value;
+			if (tempHours != "") hours = parseInt(tempHours);
+
+			var tempMinutes = document.getElementById('minutes').value;
+			if (tempMinutes != "") minutes = parseInt(tempMinutes);
+
+			var tempSeconds = document.getElementById('seconds').value;
+			if (tempSeconds != "") seconds = parseInt(tempSeconds);			
+
+			seconds = hours*3600 + minutes*60 + seconds;
+
+			count();
+			document.getElementById('start').disabled = true;
+		}
+
+		function count () {
+
+			var hours = Math.floor(seconds/3600); // returns 2 for a value of 8000
+			if (hours < 10) hours = "0" + hours;
+
+			var tempSeconds = seconds % 3600; //remainder
+
+			minutes = Math.floor(tempSeconds/60); //returns 2 for a value of 150
+			if(minutes < 10) minutes = "0"+minutes;
+
+			tempSeconds = tempSeconds % 60; //remainder
+			if (tempSeconds < 10) tempSeconds = "0"+tempSeconds;
+
+			document.title = "Timer: " + hours + ":" + minutes + ":"+ tempSeconds;
+			
+			if (resetBoolean){
+				return;
+			}
+
+			if (seconds > 0) {
+				setTimeout(count, 1000);
+			}
+			
+			else{
+				setTimeout(end1, 1000);
+			}
+			
+			seconds--;
+		}
+
+		function end1(){
+			document.title = "Timer: Done!";
+			if (resetBoolean == false) setTimeout(end2, 1000);
+		}
+		function end2(){
+			document.title = "TIME'S UP!";
+			if (resetBoolean == false) setTimeout(end1, 1000);
+		}
+
+		function reset(){
+			resetBoolean = true;
+			document.getElementById('start').disabled = false;
+			seconds = 0;
+			setTimeout(function(){document.title = "Timer: Reset"; resetBoolean = false;}, 1010);
+		}
+
+
+	</script>
+
+</body>
+</html>
