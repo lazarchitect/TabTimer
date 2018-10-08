@@ -8,25 +8,27 @@
 
 	<br>
 
-	Hours: <input type="number" id="hours" min="0">
-
-	<br>
-
-	Minutes: <input type="number" id="minutes" min="0" max="59">
-
-	<br>
-
-	Seconds: <input type="number" id="seconds" min="0" max="59">
+	Hours: <input type="number" id="hours" min="0" style="width:100px; position:relative; left:13px;">
 
 	<br><br>
 
+	Minutes: <input type="number" id="minutes" min="0" max="59" style="width:100px;">
+
+	<br><br>
+
+	Seconds: <input type="number" id="seconds" min="0" max="59" style="width:100px; position: relative; right: 1px;">
+
+	<br><br><br>
+
 	<button id="start" onclick="start()">Start</button>
+	<button id="pause" onclick="pause()">Pause</button>
 	<button id="reset" onclick="reset()">Reset</button>
 
 	<script type="text/javascript">
 
 		var seconds = 0;
 		var resetBoolean = false;
+		var pauseBoolean = false;
 
 		function start () {
 
@@ -44,11 +46,21 @@
 
 			seconds = hours*3600 + minutes*60 + seconds;
 
-			count();
-			document.getElementById('start').disabled = true;
+			if (seconds != 0){
+				count();
+				document.getElementById('start').disabled = true;
+			}
 		}
 
 		function count () {
+
+			if (resetBoolean){
+				return;
+			}
+
+			if(pauseBoolean){
+				return;
+			}
 
 			var hours = Math.floor(seconds/3600); // returns 2 for a value of 8000
 			if (hours < 10) hours = "0" + hours;
@@ -62,10 +74,6 @@
 			if (tempSeconds < 10) tempSeconds = "0"+tempSeconds;
 
 			document.title = "Timer: " + hours + ":" + minutes + ":"+ tempSeconds;
-			
-			if (resetBoolean){
-				return;
-			}
 
 			if (seconds > 0) {
 				setTimeout(count, 1000);
@@ -78,11 +86,26 @@
 			seconds--;
 		}
 
+		function pause(){
+			if (seconds > 0) { // pause shouldnt work if timer is done, reset, or not started
+				pauseBoolean = true;
+				document.getElementById('pause').setAttribute("onclick", "resume()");
+				document.getElementById('pause').innerText = "Resume";
+			}
+		}
+
+		function resume(){
+			pauseBoolean = false;
+			document.getElementById('pause').setAttribute("onclick", "pause()");
+			document.getElementById('pause').innerText = "Pause";
+			count();
+		}
+
 		function end1(){
 			document.title = "Timer: Done!";
 			if (resetBoolean == false) setTimeout(end2, 1000);
 		}
-		function end2(){
+		function end2(){ //this is just to toggle in between the two modes.
 			document.title = "TIME'S UP!";
 			if (resetBoolean == false) setTimeout(end1, 1000);
 		}
